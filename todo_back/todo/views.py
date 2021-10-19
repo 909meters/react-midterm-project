@@ -1,4 +1,4 @@
-from rest_framework import status, generics
+from rest_framework import generics
 
 from todo.models import Todo
 from todo.serializers import TodoListSerializer
