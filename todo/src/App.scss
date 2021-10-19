@@ -1,12 +1,21 @@
 .App {
   position: relative;
-  margin: 48px auto;
+  margin:0 auto;
+  padding: 20px 0px;
   width: 50%;
-  height: 50vh;
+  height: calc(100vh - 50px);;
   border-radius: 16px;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  .input-bar{
+    width: 100%;
+    position: absolute;
+    bottom: 0px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 12px;
+  }
   .todo {
     display: flex;
     align-items: center;

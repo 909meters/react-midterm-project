@@ -3,6 +3,9 @@ import React, { useState } from 'react';
 import Todo from './Todo'
 import { todo_list } from './todos'
 import TextField from '@mui/material/TextField';
+import Fab from '@mui/material/Fab';
+import Container from '@mui/material/Container';
+import AddIcon from '@mui/icons-material/Add';
 
 function App() {
   const [list, setTodo_list] = useState(todo_list)
@@ -13,7 +16,15 @@ function App() {
           <Todo data = {val} />
         )
       }
-      <TextField id="outlined-basic" label="Outlined" variant="outlined" />
+      <div className="input-bar">
+
+        <TextField fullWidth id="outlined-basic" label="Добавьте задачу" variant="outlined" />
+        
+        <Fab size="medium" color="primary" aria-label="add">
+          <AddIcon />
+        </Fab>
+
+      </div>
     </div>
   );
 }
