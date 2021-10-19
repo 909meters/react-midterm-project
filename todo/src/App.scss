@@ -1,20 +1,42 @@
 .App {
   position: relative;
-  margin:0 auto;
-  padding: 20px 0px;
-  width: 50%;
-  height: calc(100vh - 50px);;
+  flex-direction: column;
+  height: 100vh;
+  margin: 0px 24px;
   border-radius: 16px;
   display: flex;
-  flex-direction: column;
+  .ListHolder{
+    margin:0 auto;
+    padding: 24px 0px;
+    width: 50%;
+    height: 100%;
+    overflow-y: scroll;
+  }
+  .ListHolder::-webkit-scrollbar {
+    display: none;
+  }
   .input-bar{
     width: 100%;
-    position: absolute;
-    bottom: 0px;
+    bottom: 24px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    gap: 12px;
+    padding: 12px;
+    .input-line{
+      width: 70%;
+    }
+    .input-date{
+      width: 600px;
+    }
+    .input-btn{
+      width: 48px;
+      height: 48px;
+      margin: 0px 24px
+    }
+  }
+  .failed{
+    border: 1px solid red;
+    background-color: rgb(255, 243, 240);
   }
   .todo {
     display: flex;
@@ -23,20 +45,41 @@
     background-color: aliceblue;
     border-radius: 16px;
     padding: 12px;
+    padding-bottom: 24px;
     min-height: 48px;
     margin-bottom: 12px;
-    .right{
-      margin-right: 32px;
-      // text-decoration:line-through;
+    .edit{
+      width: 100%;
+      gap: 12px;
+      margin-right: 36px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
     }
+    p{
+      margin-right: 24px;
+    }
+    .date{
+      display: flex;
+      align-items: center;
+      position: absolute;
+      font-size: 12px;
+      bottom: 12px;
+      right: 12px;
+    }
+    .done{
+      text-decoration:line-through;
+    }
+    
     .del {
       position: absolute;
-      top: 12px;
-      right: 12px;
+      top: 8px;
+      right: 8px;
       transition: 0.3s all;
       cursor: pointer;
+      transform: scale(1.3);
       &:hover{
-        transform: scale(1.3);
+        transform: scale(1.5);
       }
     }
   }

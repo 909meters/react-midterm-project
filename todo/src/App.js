@@ -1,30 +1,127 @@
 import './App.scss';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Todo from './Todo'
-import { todo_list } from './todos'
-import TextField from '@mui/material/TextField';
-import Fab from '@mui/material/Fab';
-import Container from '@mui/material/Container';
 import AddIcon from '@mui/icons-material/Add';
+import { Fab, TextField } from '@mui/material'
+import axios from 'axios';
+import DateTimePicker from '@mui/lab/DateTimePicker';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
 function App() {
-  const [list, setTodo_list] = useState(todo_list)
+  const URL = "http://localhost:8000"
+  const [list, setList] = useState([])
+  const [text, setText] = useState('')
+  const [value, setValue] = useState(new Date());
+
+  useEffect(() => {
+    const get_list = async () => {
+      await getTodos()
+    }
+    get_list()
+  }, [])
+
+  const getTodos = async () => {
+    axios.get('http://localhost:8000/list/')
+      .then(res => {
+        const data = res.data
+        setList(data)
+      })
+      .catch(err => {
+        alert(err)
+      })
+  }
+
+  const onSubmit = () => {
+    const data = {
+      "text": text,
+      "done": false,
+      "planned_date": value.toISOString(),
+    }
+    axios.post(`${URL}/list/`, data)
+      .then(res => {
+        const data = res.data
+        setList([...list, data])
+        setText('')
+      })
+      .catch(err => {
+        if (!text) {
+          alert("Пустой")
+        } else {
+          alert(err)
+        }
+      })
+  }
+
+  const deleteTodo = (data) => {
+    const result = window.confirm("Удалить?");
+    if (result) {
+      axios.delete(`${URL}/list/${data?.id}`)
+        .then(res => {
+          if (res.status === 204) {
+            setList(list.filter((item) => item.id !== data.id))
+          }
+        })
+        .catch(err => {
+          alert(err)
+        })
+    }
+  }
+
+  const patchTodo = (req) => {
+    const data = {
+      "text": req.text,
+      "done": !req.done,
+      "planned_date": req.planned_date
+    }
+    axios.patch(`${URL}/list/${req.id}/`, data)
+      .catch(err => {
+        alert(err)
+      })
+  }
+
   return (
     <div className="App">
-      {
-        list.map((val) =>
-          <Todo data = {val} />
-        )
-      }
-      <div className="input-bar">
+      
+      <div className="ListHolder">
 
-        <TextField fullWidth id="outlined-basic" label="Добавьте задачу" variant="outlined" />
-        
-        <Fab size="medium" color="primary" aria-label="add">
-          <AddIcon />
-        </Fab>
+        {
+          list.map((val, index) =>
+            <Todo key={index} data={val} delete={deleteTodo} patch={patchTodo} />
+          )
+        }
 
       </div>
+      
+      <div className="input-bar">
+
+        <LocalizationProvider className="input-date" dateAdapter={AdapterDateFns}>
+          <DateTimePicker
+            renderInput={(props) => <TextField {...props} />}
+            label="Дата выполнения"
+            value={value}
+            ampm = {false}
+            onChange={(newValue) => {
+              setValue(newValue);
+            }}
+          />
+        </LocalizationProvider>   
+             
+        <TextField
+          className="input-line"
+          id="outlined-basic"
+          label="Добавьте задачу"
+          variant="outlined"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
+
+        <Fab className="input-btn" onClick={onSubmit} size="medium" color="primary" aria-label="add">
+          <AddIcon />
+        </Fab>
+        
+      </div>
+
     </div>
   );
 }
