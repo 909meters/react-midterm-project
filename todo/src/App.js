@@ -78,7 +78,7 @@ function App() {
     if (typeof req.planned_date == "object") {
       formData.append('planned_date', req.planned_date.toISOString())
     }
-    if (typeof req.image !== "string") {
+    if (typeof req.image !== "string" && req.image !==null) {
       formData.append('image', req.image)
     }
     axios.patch(`${URL}/list/${req.id}/`, formData)
