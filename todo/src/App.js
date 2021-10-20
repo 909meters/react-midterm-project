@@ -7,12 +7,14 @@ import axios from 'axios';
 import DateTimePicker from '@mui/lab/DateTimePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 
 function App() {
   const URL = "http://localhost:8000"
   const [list, setList] = useState([])
   const [text, setText] = useState('')
   const [value, setValue] = useState(new Date());
+  const [image, setImage] = useState("")
 
   useEffect(() => {
     const get_list = async () => {
@@ -33,12 +35,13 @@ function App() {
   }
 
   const onSubmit = () => {
-    const data = {
-      "text": text,
-      "done": false,
-      "planned_date": value.toISOString(),
-    }
-    axios.post(`${URL}/list/`, data)
+    let formData = new FormData()
+    formData.append('text', text)
+    formData.append('done', false)
+    formData.append('planned_date', value.toISOString())
+    formData.append('image', image)
+
+    axios.post(`${URL}/list/`, formData)
       .then(res => {
         const data = res.data
         setList([...list, data])
@@ -69,20 +72,27 @@ function App() {
   }
 
   const patchTodo = (req) => {
-    const data = {
-      "text": req.text,
-      "done": !req.done,
-      "planned_date": req.planned_date
+    let formData = new FormData()
+    formData.append('text', req.text)
+    formData.append('done', !req.done)
+    if (typeof req.planned_date === "date") {
+      formData.append('planned_date', req.planned_date.toISOString())
     }
-    axios.patch(`${URL}/list/${req.id}/`, data)
+    if (typeof req.image !== "string") {
+      formData.append('image', req.image)
+    }
+    axios.patch(`${URL}/list/${req.id}/`, formData)
       .catch(err => {
         alert(err)
+      })
+      .finally(() => {
+        window.location.reload();  
       })
   }
 
   return (
     <div className="App">
-      
+
       <div className="ListHolder">
 
         {
@@ -92,7 +102,8 @@ function App() {
         }
 
       </div>
-      
+
+
       <div className="input-bar">
 
         <LocalizationProvider className="input-date" dateAdapter={AdapterDateFns}>
@@ -100,13 +111,13 @@ function App() {
             renderInput={(props) => <TextField {...props} />}
             label="Дата выполнения"
             value={value}
-            ampm = {false}
+            ampm={false}
             onChange={(newValue) => {
               setValue(newValue);
             }}
           />
-        </LocalizationProvider>   
-             
+        </LocalizationProvider>
+
         <TextField
           className="input-line"
           id="outlined-basic"
@@ -119,7 +130,35 @@ function App() {
         <Fab className="input-btn" onClick={onSubmit} size="medium" color="primary" aria-label="add">
           <AddIcon />
         </Fab>
-        
+
+        <input
+          accept="image/*"
+          id="icon-button-file"
+          type="file"
+          style={{ display: 'none' }}
+          label="Добавить фото"
+          onChange={(e) => {
+            setImage(e.target.files[0]);
+          }}
+        />
+
+
+        <div className="photo-add">
+          <label for="icon-button-file">
+            <AddAPhotoIcon />
+          </label>
+
+          {image &&
+            <>
+              <p> {image.name} </p>
+
+              <svg onClick={() => setImage(null)} className="del" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15.59 7L12 10.59L8.41 7L7 8.41L10.59 12L7 15.59L8.41 17L12 13.41L15.59 17L17 15.59L13.41 12L17 8.41L15.59 7Z" fill="#2E3A59" />
+              </svg>
+            </>
+          }
+
+        </div>
       </div>
 
     </div>

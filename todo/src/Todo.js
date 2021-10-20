@@ -13,6 +13,8 @@ export default function Todo(props) {
   const [edit, setEdit] = useState(false)
   const [text, setText] = useState(props.data.text)
   const [value, setValue] = useState(new Date(props.data.planned_date));
+  const [image, setImage] = useState(null)
+
 
   const getDate = (e) => {
     if (e) {
@@ -39,6 +41,7 @@ export default function Todo(props) {
 
       <Checkbox size='medium'
         checked={checked}
+        style = {{alignSelf: 'start'}}
         onChange={() => {
           setChecked(!checked)
           props.patch(props.data)
@@ -51,6 +54,7 @@ export default function Todo(props) {
       {
         edit &&
         <div className="edit">
+
           <TextField
             variant="standard"
             multiline
@@ -70,11 +74,22 @@ export default function Todo(props) {
             />
           </LocalizationProvider>
 
+          <input
+          accept="image/*"
+          id="icon-button-file"
+          type="file"
+          label="Изменить фото"
+          onChange={(e) => {
+            setImage(e.target.files[0]);
+          }}
+        />
+
           <Button
             className="edit-btn"
             onClick={() => {
               props.data.text = text
               props.data.planned_date = value
+              props.data.image = image
               props.patch(props.data)
               setEdit(false)
             }}
@@ -82,7 +97,14 @@ export default function Todo(props) {
             variant="contained">Изменить</Button>
         </div>
         ||
-        <p>{props.data.text}</p>
+        <div style = {{flexDirection:"column"}}>
+          <p style = {{marginTop: '12px'}}>{props.data.text}</p>
+          <img
+            style = {{height: "120px", margin: "12px 0px"}}
+            src={props.data.image}
+            alt="фотка"
+          />
+        </div>
       }
 
 
