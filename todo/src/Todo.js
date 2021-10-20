@@ -41,7 +41,7 @@ export default function Todo(props) {
 
       <Checkbox size='medium'
         checked={checked}
-        style = {{alignSelf: 'start'}}
+        style={{ alignSelf: 'start' }}
         onChange={() => {
           setChecked(!checked)
           props.patch(props.data)
@@ -75,21 +75,23 @@ export default function Todo(props) {
           </LocalizationProvider>
 
           <input
-          accept="image/*"
-          id="icon-button-file"
-          type="file"
-          label="Изменить фото"
-          onChange={(e) => {
-            setImage(e.target.files[0]);
-          }}
-        />
+            accept="image/*"
+            id="icon-button-file"
+            type="file"
+            label="Изменить фото"
+            onChange={(e) => {
+              setImage(e.target.files[0]);
+            }}
+          />
 
           <Button
             className="edit-btn"
             onClick={() => {
               props.data.text = text
               props.data.planned_date = value
-              props.data.image = image
+              if (image) {
+                props.data.image = image
+              }
               props.patch(props.data)
               setEdit(false)
             }}
@@ -97,13 +99,16 @@ export default function Todo(props) {
             variant="contained">Изменить</Button>
         </div>
         ||
-        <div style = {{flexDirection:"column"}}>
-          <p style = {{marginTop: '12px'}}>{props.data.text}</p>
-          <img
-            style = {{height: "120px", margin: "12px 0px"}}
-            src={props.data.image}
-            alt="фотка"
-          />
+        <div style={{ flexDirection: "column" }}>
+          <p style={{ marginTop: '12px' }}>{props.data.text}</p>
+          {
+            props.data.image &&
+            <img
+              style={{ height: "120px", margin: "12px 0px" }}
+              src={props.data.image}
+              alt="фотка"
+            />
+          }
         </div>
       }
 

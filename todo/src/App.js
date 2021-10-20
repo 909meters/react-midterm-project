@@ -75,7 +75,7 @@ function App() {
     let formData = new FormData()
     formData.append('text', req.text)
     formData.append('done', !req.done)
-    if (typeof req.planned_date === "date") {
+    if (typeof req.planned_date == "object") {
       formData.append('planned_date', req.planned_date.toISOString())
     }
     if (typeof req.image !== "string") {
