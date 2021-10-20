@@ -82,11 +82,17 @@ function App() {
       formData.append('image', req.image)
     }
     axios.patch(`${URL}/list/${req.id}/`, formData)
+    .then(res=>{
+        const newlist = list.map(val=>{
+          if(val.id==res.data.id){
+            val = res.data
+          }
+          return val
+        }) 
+        setList(newlist)
+      })
       .catch(err => {
         alert(err)
-      })
-      .finally(() => {
-        window.location.reload();  
       })
   }
 
